@@ -24,10 +24,10 @@ app.use(bodyParser.json());
 app.use(morgan('combined', { stream: accessLogStream }));
 
 //Activar Cors, esto se hace tanto aqui en codigo y en el Web.Config
-app.options('/', cors());
+app.options('/gruas', cors());
 
 //Aqui van las rutas y la direccion que tendran que poner para llegar a este servicio.
-app.use('/', rutasCimarron);
+app.use('/gruas', rutasCimarron);
 
 
 //Middleware para cachar errores y mandarlos al usuario final.
