@@ -42,7 +42,7 @@ app.use((err, req, res, next) => {
 database
   .sync()
   .then((result) => {
-    app.listen(8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => {
     console.error('error', err);
