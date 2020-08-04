@@ -1,5 +1,6 @@
 const database = require('../util/database');
 const Boom = require('@hapi/boom');
+const jsonxml = require('jsontoxml');
 
 exports.GetStatus = async (req, res, next) => {
   const IDEstatus = req.params.IDEstatus;
@@ -22,6 +23,31 @@ ORDER BY DATEDIFF(minute, Captura.Fecha_Captura, GETDATE()) DESC`;
     });
     console.log(DatosGrid);
     res.status(200).json({ grid: DatosGrid });
+  } catch (err) {
+    next(Boom.serverUnavailable('Fallo en el servidor'));
+  }
+};
+
+exports.getOperadores = async (req, res, next) => {
+  const query = `SELECT VCA.Id_Empleado as id,VCA.NOMBRE as Empleado  FROM OperadoresAPP as Op
+  JOIN VistaChoferesActivos as VCA ON Op.Id_Empleado=VCA.Id_Empleado`;
+  try {
+    const empleados = await database.query(query, {
+      type: database.QueryTypes.SELECT,
+    });
+    res.status(200).json({ empleados });
+  } catch (err) {
+    next(Boom.serverUnavailable('Fallo en el servidor'));
+  }
+};
+exports.getOperadoresXML = async (req, res, next) => {
+  const query = `SELECT VCA.Id_Empleado as id,VCA.NOMBRE as Empleado  FROM OperadoresAPP as Op
+  JOIN VistaChoferesActivos as VCA ON Op.Id_Empleado=VCA.Id_Empleado`;
+  try {
+    const empleados = await database.query(query, {
+      type: database.QueryTypes.SELECT,
+    });
+    res.set('Content-Type', 'text/xml').status(200).send(jsonxml({empleados}))
   } catch (err) {
     next(Boom.serverUnavailable('Fallo en el servidor'));
   }

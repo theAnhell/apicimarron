@@ -8,12 +8,13 @@ const path = require('path');
 const fs = require('fs');
 const database = require('./util/database');
 const rutasCimarron = require('./routes/cimarron');
+const rutasAuth = require('./routes/auth');
 
 const app = express();
 
 //Stream de escritura para hacer logging.
 const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, 'access.log'),
+  path.join(__dirname + '/iisnode', 'access.log'),
   { flags: 'a' }
 );
 
@@ -28,7 +29,7 @@ app.options('/', cors());
 
 //Aqui van las rutas y la direccion que tendran que poner para llegar a este servicio.
 app.use('/', rutasCimarron);
-
+app.use('/auth', rutasAuth);
 
 //Middleware para cachar errores y mandarlos al usuario final.
 app.use((err, req, res, next) => {
@@ -42,7 +43,7 @@ app.use((err, req, res, next) => {
 database
   .sync()
   .then((result) => {
-    app.listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 3535);
   })
   .catch((err) => {
     console.error('error', err);
